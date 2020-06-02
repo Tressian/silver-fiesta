@@ -1,24 +1,16 @@
 from discord.ext.commands import Bot
 import asyncio
+from random import randint
 
 
 BOT_PREFIX = ("!", "?", "--")
-TOKEN = 'TOKEN'
+token_file = open("D:\Auri.txt")
+TOKEN = token_file.read()
 client = Bot(command_prefix=BOT_PREFIX)
 
 
 def event_messages():
-    # Trader
-    async def DO_SOMETHING():
-        await client.wait_until_ready()
-        while not client.is_closed:
-            if not client.wait_until_ready():
-                print('Client not ready yet')
-                await asyncio.sleep(5)
-            await client.wait_until_ready()
-
-
-    # Commands
+    #   Commands
     async def get_servers():
         await client.wait_until_ready()
         print('List all servers and channels:')
@@ -30,19 +22,27 @@ def event_messages():
     async def on_message(message):
         my_message = message.content.lower()
 
-        #   we do not want the bot to reply to itself
+        #   We do not want the bot to reply to itself
         if message.author == client.user:
             return
 
-        # Auri only reacts in the auri channel
-        if message.channel.name != 'auri':
-            print('Auri only responds to the Auri channel!')
-            return
-        msg = []
-        #   React
+        #   Dice roll command
+        if my_message.startswith('/roll'):
+            my_message = my_message.replace('/roll ', '')
+            my_message = my_message.replace('/roll', '')
+            roll = []
 
+            for s in my_message.split('d'):
+                if s.isdigit():
+                    roll.append(int(s))
 
-
+            dices = []
+            if len(roll) == 2:
+                for i in range(0, roll[0]):
+                    dices.append(randint(0, roll[1]))
+                await message.channel.send(dices)
+            else:
+                await message.channel.send('Invalid command')
 
     @client.event
     async def on_ready():
@@ -52,7 +52,6 @@ def event_messages():
         print('----')
 
     client.loop.create_task(get_servers())
-    client.loop.create_task(DO_SOMETHING())
     client.run(TOKEN)
 
 
