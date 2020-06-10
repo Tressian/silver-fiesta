@@ -32,7 +32,7 @@ def event_messages():
                 msg = f"--- {len(search_df.index)} Gevonden resultaten, eerste 10 resultaten:\n"
             else:
                 msg = f"--- {len(search_df.index)} Gevonden resulaten:\n"
-            msg = msg + search_df.head(10).to_string()
+            msg = msg + "```" + search_df.head(10).to_string() + "```"
             await message.channel.send(msg)
 
     @client.event
